@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Management Tools: A Visual Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Brilliant Blues -->
+    <!-- Narrative & Structure Plan: The infographic tells a story to guide a QA professional's decision. It starts with a broad introduction ("The Contenders"), moves to a high-level visual summary (Radar Chart), then dives into specific comparisons (Feature Deep Dive, Jira Ecosystem), addresses the practical constraint (Pricing), and concludes with actionable advice (Expert Recommendations). This top-down narrative structure makes the complex data digestible and helps users logically narrow down their choices. -->
+    <!-- Visualization & Content Choices: 
+        - Data Point: Overall tool ratings -> Goal: Compare -> Visualization: Radar Chart -> Justification: Provides an immediate, multi-axial visual summary of a tool's strengths and weaknesses, perfect for high-level comparison. Library: Chart.js (Canvas). CONFIRM: NO SVG.
+        - Data Point: Specific feature ratings -> Goal: Compare -> Visualization: Grouped Bar Chart -> Justification: Allows for a direct, granular comparison of tools across key vectors like Automation and Reporting. Library: Chart.js (Canvas). CONFIRM: NO SVG.
+        - Data Point: Jira relationship -> Goal: Organize -> Visualization: HTML/CSS Diagram -> Justification: Clearly segments tools into "native" vs. "integrated," a critical, binary decision point for many teams. Method: Styled HTML with Tailwind. CONFIRM: NO SVG/Mermaid.
+        - Data Point: Tool Pricing -> Goal: Compare -> Visualization: Horizontal Bar Chart -> Justification: Best for comparing numerical values with categorical labels, making price differences immediately apparent. Library: Chart.js (Canvas). CONFIRM: NO SVG.
+        - Data Point: Expert Recommendations -> Goal: Organize -> Visualization: Card Layout -> Justification: Presents qualitative advice in themed, easy-to-read blocks catering to different user personas. Method: Styled HTML with Tailwind. CONFIRM: NO SVG.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+                max-height: 500px;
+            }
+        }
+        .bg-custom-primary { background-color: #005F73; }
+        .bg-custom-secondary { background-color: #0A9396; }
+        .text-custom-accent { color: #EE9B00; }
+        .border-custom-accent { border-color: #EE9B00; }
+    </style>
+</head>
+<body class="text-gray-700">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center my-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold bg-custom-primary text-white py-4 rounded-xl shadow-lg">Choosing Your QA Command Center</h1>
+            <p class="mt-4 text-xl md:text-2xl text-gray-600">A Visual Guide to Test Management Tools</p>
+            <p class="mt-2 max-w-3xl mx-auto text-gray-500">In modern software development, a robust Test Case Management (TCM) tool is essential for ensuring quality. This guide visually breaks down the leading contenders to help you find the perfect fit for your team's workflow.</p>
+        </header>
+
+        <section class="my-16">
+             <h2 class="text-3xl font-bold text-center mb-10"><span class="text-custom-accent">1.</span> The Contenders: At a Glance</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-custom-secondary">
+                    <h3 class="text-xl font-bold text-custom-primary">TestRail</h3>
+                    <p class="mt-2">Comprehensive and scalable for teams of all sizes, available on cloud or server.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-custom-secondary">
+                    <h3 class="text-xl font-bold text-custom-primary">Xray</h3>
+                    <p class="mt-2">A powerful, full-featured test management app that lives natively inside Jira.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-custom-secondary">
+                    <h3 class="text-xl font-bold text-custom-primary">Zephyr Squad</h3>
+                    <p class="mt-2">A user-friendly and flexible test management solution for agile teams within Jira.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-custom-secondary">
+                    <h3 class="text-xl font-bold text-custom-primary">Testmo</h3>
+                    <p class="mt-2">A modern, unified platform for manual, exploratory, and automated testing.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-custom-secondary">
+                    <h3 class="text-xl font-bold text-custom-primary">PractiTest</h3>
+                    <p class="mt-2">An all-in-one QA management platform with a focus on end-to-end traceability.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-custom-secondary">
+                    <h3 class="text-xl font-bold text-custom-primary">Qase</h3>
+                    <p class="mt-2">A modern tool with a clean UI, built for developer and QA collaboration.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-20 bg-white rounded-xl shadow-lg p-6 md:p-10">
+            <h2 class="text-3xl font-bold text-center mb-2"><span class="text-custom-accent">2.</span> Overall Capability Matrix</h2>
+            <p class="text-center text-gray-500 mb-8 max-w-2xl mx-auto">This radar chart shows the "shape" of each tool's strengths across five key domains. A larger shape indicates a more well-rounded, powerful tool.</p>
+            <div class="chart-container h-96 md:h-[500px]">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </section>
+
+        <section class="my-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-4"><span class="text-custom-accent">3.</span> Feature Deep Dive</h2>
+                    <p class="text-gray-500 mb-6">While overall capability is important, specific features can be deal-breakers. This chart compares tools on three critical aspects: their integration power, reporting depth, and support for test automation, which are crucial for modern DevOps and Agile workflows.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-4">
+                        <h4 class="font-bold text-lg text-custom-primary">Key Takeaway</h4>
+                        <p class="text-gray-600 mt-2">Tools like <b class="text-black">Xray</b>, <b class="text-black">Testmo</b>, and <b class="text-black">Qase</b> are built with automation as a first-class citizen, making them ideal for CI/CD environments. <b class="text-black">TestRail</b> and <b class="text-black">PractiTest</b> offer the most powerful and customizable reporting engines for enterprise needs.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="chart-container h-96">
+                         <canvas id="groupedBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-20 bg-white rounded-xl shadow-lg p-6 md:p-10">
+            <h2 class="text-3xl font-bold text-center mb-2"><span class="text-custom-accent">4.</span> The Jira Ecosystem: Native vs. Integrated</h2>
+            <p class="text-center text-gray-500 mb-8 max-w-2xl mx-auto">For many teams, the choice comes down to how a tool works with Jira. Do you want a tool that lives inside Jira, or one that connects to it?</p>
+            <div class="flex flex-col md:flex-row gap-8 justify-center">
+                <div class="flex-1 border-2 border-dashed border-custom-primary rounded-lg p-6">
+                    <h3 class="text-2xl font-bold text-center text-custom-primary">Native Jira Apps</h3>
+                    <p class="text-center mt-2 mb-6">These tools are installed directly into your Jira instance, turning Jira issues into test cases.</p>
+                    <div class="flex flex-col gap-4">
+                        <div class="bg-custom-primary text-white text-center font-bold py-3 rounded-md shadow">Xray</div>
+                        <div class="bg-custom-primary text-white text-center font-bold py-3 rounded-md shadow">Zephyr Squad</div>
+                    </div>
+                </div>
+                <div class="flex-1 border-2 border-dashed border-custom-secondary rounded-lg p-6">
+                    <h3 class="text-2xl font-bold text-center text-custom-secondary">Standalone with Strong Integration</h3>
+                     <p class="text-center mt-2 mb-6">These are separate platforms that offer powerful, often two-way, connections with Jira.</p>
+                     <div class="flex flex-col gap-4">
+                        <div class="bg-custom-secondary text-white text-center font-bold py-3 rounded-md shadow">TestRail</div>
+                        <div class="bg-custom-secondary text-white text-center font-bold py-3 rounded-md shadow">Testmo</div>
+                        <div class="bg-custom-secondary text-white text-center font-bold py-3 rounded-md shadow">PractiTest</div>
+                        <div class="bg-custom-secondary text-white text-center font-bold py-3 rounded-md shadow">Qase</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="bg-white rounded-xl shadow-lg p-6 order-2 md:order-1">
+                     <div class="chart-container h-96">
+                         <canvas id="pricingChart"></canvas>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2">
+                    <h2 class="text-3xl font-bold mb-4"><span class="text-custom-accent">5.</span> Pricing & Value Comparison</h2>
+                    <p class="text-gray-500 mb-6">Cost is a critical factor. This chart shows the estimated starting price per user, per month. Note that pricing tiers vary greatly, but this provides a baseline for initial budget considerations.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md mt-4">
+                        <h4 class="font-bold text-lg text-custom-primary">Value Proposition</h4>
+                        <p class="text-gray-600 mt-2"><b class="text-black">Testmo</b> offers strong value for teams of ~10. Jira-native apps like <b class="text-black">Xray</b> and <b class="text-black">Zephyr</b> provide excellent value by leveraging your existing Jira investment. <b class="text-black">Qase's</b> generous free tier is unbeatable for small teams getting started.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-16">
+            <h2 class="text-3xl font-bold text-center mb-10"><span class="text-custom-accent">6.</span> Expert Recommendations: Who is it Best For?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-custom-primary text-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-3 border-b-2 border-custom-accent pb-2">Jira-Centric Teams</h3>
+                    <p>If your team lives and breathes Jira, a native app is your best bet. <b class="text-custom-accent">Xray</b> is the power-user choice for complexity and BDD. <b class="text-custom-accent">Zephyr Squad</b> is perfect for simplicity and ease of use.</p>
+                </div>
+                <div class="bg-custom-primary text-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-3 border-b-2 border-custom-accent pb-2">Automation-Heavy Teams</h3>
+                    <p>Teams focused on CI/CD and automation should look at <b class="text-custom-accent">Testmo</b> or <b class="text-custom-accent">Qase</b>. Their modern UIs and developer-friendly CLIs make them perfect for unifying manual and automated results.</p>
+                </div>
+                <div class="bg-custom-primary text-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-3 border-b-2 border-custom-accent pb-2">Enterprise & Regulated</h3>
+                    <p>For large organizations or those in regulated industries, <b class="text-custom-accent">TestRail</b>'s scalability and self-hosted option are key. <b class="text-custom-accent">PractiTest</b> offers unbeatable audit trails and traceability.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const toolsData = {
+            labels: ['TestRail', 'Xray', 'Zephyr Squad', 'Testmo', 'PractiTest', 'Qase'],
+            ratings: {
+                usability: [4, 4, 5, 5, 4, 5],
+                integration: [4, 5, 5, 4, 4, 4],
+                reporting: [5, 5, 3, 4, 5, 4],
+                automation: [4, 5, 3, 5, 4, 5],
+                pricing_score: [3, 4, 4, 4, 2, 5]
+            },
+            pricing: [37, 10, 10, 9.9, 49, 20],
+            colors: {
+                main: ['#005F73', '#0A9396', '#94D2BD', '#E9D8A6', '#EE9B00', '#CA6702'],
+                background: ['rgba(0, 95, 115, 0.2)', 'rgba(10, 147, 150, 0.2)', 'rgba(148, 210, 189, 0.2)', 'rgba(233, 216, 166, 0.2)', 'rgba(238, 155, 0, 0.2)', 'rgba(202, 103, 2, 0.2)']
+            },
+            featureColors: {
+                integration: '#0A9396',
+                reporting: '#EE9B00',
+                automation: '#9B2226',
+            }
+        };
+
+        const chartTooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            size: 14,
+                            family: "'Inter', sans-serif"
+                        }
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                       title: function(tooltipItems) {
+                           const item = tooltipItems[0];
+                           let label = item.chart.data.labels[item.dataIndex];
+                           if(item.dataset.label){
+                               label = item.dataset.label
+                           } else if (Array.isArray(label)) {
+                             return label.join(' ');
+                           }
+                           return label;
+                       }
+                    }
+                }
+            }
+        };
+        
+        const processLabels = (labels, maxLength) => {
+            return labels.map(label => {
+                if (label.length <= maxLength) {
+                    return label;
+                }
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                words.forEach(word => {
+                    if ((currentLine + ' ' + word).trim().length > maxLength) {
+                        lines.push(currentLine.trim());
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    }
+                });
+                lines.push(currentLine.trim());
+                return lines;
+            });
+        };
+
+        new Chart(document.getElementById('radarChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Usability', 'Integration', 'Reporting', 'Automation', 'Value'],
+                datasets: toolsData.labels.map((label, index) => ({
+                    label: label,
+                    data: [
+                        toolsData.ratings.usability[index],
+                        toolsData.ratings.integration[index],
+                        toolsData.ratings.reporting[index],
+                        toolsData.ratings.automation[index],
+                        toolsData.ratings.pricing_score[index],
+                    ],
+                    borderColor: toolsData.colors.main[index],
+                    backgroundColor: toolsData.colors.background[index],
+                    borderWidth: 2,
+                    pointBackgroundColor: toolsData.colors.main[index],
+                }))
+            },
+            options: { ...commonChartOptions,
+                scales: {
+                    r: {
+                        angleLines: { color: '#d1d5db' },
+                        grid: { color: '#e5e7eb' },
+                        pointLabels: { font: { size: 14, weight: '600' }, color: '#374151' },
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                        ticks: {
+                            stepSize: 1,
+                            backdropColor: 'rgba(255, 255, 255, 0.75)'
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('groupedBarChart'), {
+            type: 'bar',
+            data: {
+                labels: toolsData.labels,
+                datasets: [
+                    {
+                        label: 'Integration',
+                        data: toolsData.ratings.integration,
+                        backgroundColor: toolsData.featureColors.integration,
+                    },
+                    {
+                        label: 'Reporting',
+                        data: toolsData.ratings.reporting,
+                        backgroundColor: toolsData.featureColors.reporting,
+                    },
+                    {
+                        label: 'Automation',
+                        data: toolsData.ratings.automation,
+                        backgroundColor: toolsData.featureColors.automation,
+                    }
+                ]
+            },
+            options: { ...commonChartOptions,
+                 scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        grid: {
+                            color: '#e5e7eb',
+                        }
+                    },
+                    x: {
+                         grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('pricingChart'), {
+            type: 'bar',
+            data: {
+                labels: toolsData.labels,
+                datasets: [{
+                    label: 'Estimated Starting Price ($/user/month)',
+                    data: toolsData.pricing,
+                    backgroundColor: toolsData.colors.main,
+                    borderColor: toolsData.colors.main,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...commonChartOptions,
+                indexAxis: 'y',
+                plugins: {
+                   legend: {
+                        display: false
+                    },
+                    tooltip: {
+                         enabled: true,
+                         callbacks: {
+                           title: (tooltipItems) => {
+                                return tooltipItems[0].label;
+                           },
+                           label: (context) => {
+                               return ` $${context.parsed.x.toFixed(2)} / user / month`;
+                           }
+                         }
+                    }
+                },
+                 scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '$/user/month'
+                        },
+                        grid: {
+                            color: '#e5e7eb',
+                        }
+                    },
+                    y: {
+                         grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
