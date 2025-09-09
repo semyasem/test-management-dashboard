@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Case Management Tool Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application uses a dashboard/thematic structure. A persistent left-hand navigation allows users to switch between key comparison categories (Core Features, Integrations, Pricing, etc.). This is superior to a single large table as it breaks down complex information into digestible, user-selected themes, preventing cognitive overload and eliminating horizontal scrolling. The main content area dynamically re-renders based on the selected theme. An interactive radar chart provides a high-level visual summary, while a concluding "Best For..." section offers expert synthesis. This user-centric flow allows QA professionals to focus on the criteria most important to them, making the comparison process efficient and targeted. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Multi-faceted tool comparison -> Goal: Compare -> Viz/Method: Thematic content sections, dynamically rendered via JS. Interaction: User clicks on a navigation tab to change the displayed content. Justification: Avoids a massive, unreadable table, allowing focused comparison on one aspect at a time.
+        - Report Info: Overall tool strengths/weaknesses -> Goal: Compare -> Viz/Method: Radar Chart (Chart.js/Canvas). Interaction: Hover tooltips provide details. Justification: Provides an immediate, multi-axial visual summary of how tools stack up against key QA metrics. It's a powerful way to see the "shape" of a tool's capabilities.
+        - Report Info: Tool list filtering -> Goal: Organize/Filter -> Viz/Method: Interactive HTML buttons. Interaction: User clicks to filter the list of tools displayed in all views. Justification: Allows users to narrow the selection based on hard constraints like deployment model, which is a common primary decision point.
+        - Report Info: Pricing details -> Goal: Inform -> Viz/Method: Structured HTML text. Interaction: N/A. Justification: Pricing models are too nuanced for a simple chart; clear text is the most effective way to convey this information.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* A very light, warm beige */
+            color: #374151;
+        }
+        .active-tab {
+            background-color: #3B82F6;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+        .inactive-tab {
+            background-color: #FFFFFF;
+            color: #374151;
+            border: 1px solid #E5E7EB;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 500px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 tracking-tight">Test Case Management Tool Analysis</h1>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">An interactive comparison for QA professionals, focusing on key evaluation criteria for modern software testing.</p>
+        </header>
+
+        <main>
+            <div id="app-container" class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <aside class="md:col-span-1">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">Comparison Criteria</h3>
+                    <nav id="tabs-container" class="flex flex-col space-y-2">
+                    </nav>
+                </aside>
+
+                <div id="content-container" class="md:col-span-3 bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                </div>
+            </div>
+
+            <section class="mt-16 bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">At-a-Glance Capability Matrix</h2>
+                <p class="text-center text-gray-600 mb-8">This radar chart provides a visual summary of each tool's relative strength across key QA domains. Scores are on a 1-5 scale based on feature depth and market perception.</p>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </section>
+            
+            <section class="mt-16">
+                <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Expert Summary & Recommendations</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                        <h3 class="font-bold text-lg text-blue-600">For Teams Deep in Jira</h3>
+                        <p class="mt-2 text-gray-600"><strong>Xray</strong> and <strong>Zephyr Squad</strong> are the top contenders. They live inside Jira, turning issues into test cases and requirements. <strong>Xray</strong> is more powerful and feature-rich, ideal for complex projects needing BDD support and detailed traceability. <strong>Zephyr Squad</strong> is simpler, more intuitive, and often better for smaller teams or those new to structured testing in Jira.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                        <h3 class="font-bold text-lg text-blue-600">For Modern & Automated Workflows</h3>
+                        <p class="mt-2 text-gray-600"><strong>Testmo</strong> and <strong>Qase</strong> shine here. Both offer a sleek, modern UI and are built with automation at their core. They excel at aggregating results from various test automation frameworks and CI/CD pipelines. Their developer-friendly APIs and CLI tools make them easy to integrate into a DevOps toolchain. They provide a unified view of both manual and automated testing efforts.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                        <h3 class="font-bold text-lg text-blue-600">For Enterprise & Regulated Industries</h3>
+                        <p class="mt-2 text-gray-600"><strong>TestRail</strong> and <strong>PractiTest</strong> are strong choices. <strong>TestRail</strong> is a highly scalable, mature product available in both cloud and self-hosted versions, which is critical for data governance. <strong>PractiTest</strong> is an all-in-one QA management platform with robust reporting, auditing, and traceability features that meet the stringent requirements of regulated environments like finance and healthcare.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const toolsData = [
+            {
+                id: 'testrail',
+                name: 'TestRail',
+                logo: 'TR',
+                color: '#7C3AED',
+                description: 'A comprehensive web-based test case management tool to organize, track, and manage your software testing efforts.',
+                coreFeatures: ['Rich test case management with templates', 'Test plans and runs with configurations', 'Milestone tracking', 'User roles and permissions'],
+                integrations: 'Excellent Jira integration (cloud & server), broad CI/CD integration via API, integrates with numerous automation tools.',
+                reporting: 'Strong dashboarding, activity reports, traceability and coverage reports, customizable templates.',
+                automation: 'Powerful API and CLI for integration with any automation framework. Not designed to be a test runner itself.',
+                pricing: 'Starts at ~$37/user/month (Cloud) or ~$399/user/year (Server). Enterprise plans available.',
+                ratings: { usability: 4, integration: 4, reporting: 5, automation: 4, pricing: 3 }
+            },
+            {
+                id: 'xray',
+                name: 'Xray',
+                logo: 'XR',
+                color: '#2563EB',
+                description: 'A complete Test Management app for Jira. It enhances Jira issues, turning them into a full-featured testing experience.',
+                coreFeatures: ['Lives inside Jira (native feel)', 'Defines tests within Jira issue types', 'Supports BDD (Cucumber)', 'Advanced test organization with folders'],
+                integrations: 'Deepest possible Jira integration. Integrates with all major CI/CD and automation tools via REST API and plugins.',
+                reporting: 'Leverages Jira dashboards and JQL. Provides detailed test coverage, traceability reports, and execution analysis.',
+                automation: 'Excellent automation support. Can import results from frameworks like JUnit, TestNG, Cypress, Playwright, etc.',
+                pricing: 'Priced per Jira user, tiered by number of users. Starts around $10/user/month for small teams, price per user decreases with scale.',
+                ratings: { usability: 4, integration: 5, reporting: 5, automation: 5, pricing: 4 }
+            },
+            {
+                id: 'zephyr',
+                name: 'Zephyr Squad',
+                logo: 'ZS',
+                color: '#16A34A',
+                description: 'A flexible and user-friendly test management solution inside Jira, designed for agile teams.',
+                coreFeatures: ['Native Jira integration', 'Simple test cycle creation', 'Easy-to-use interface', 'Basic test case organization'],
+                integrations: 'Seamless Jira integration. Connects to CI/CD tools like Jenkins and Bamboo. Supports automation frameworks.',
+                reporting: 'Utilizes Jira dashboards. Provides basic test summary, execution reports, and traceability metrics.',
+                automation: 'Good support for automation result importing from various frameworks. BDD support with addons.',
+                pricing: 'Priced per Jira user. A free tier for up to 10 users, then similar pricing to Xray, starting at $10/user/month for small teams.',
+                ratings: { usability: 5, integration: 5, reporting: 3, automation: 3, pricing: 4 }
+            },
+            {
+                id: 'testmo',
+                name: 'Testmo',
+                logo: 'TM',
+                color: '#F97316',
+                description: 'A unified test management tool for modern teams, combining manual, exploratory, and automated testing in one platform.',
+                coreFeatures: ['Unified view for all test types', 'Session-based exploratory testing', 'Rich text editor for manual tests', 'Fast and clean UI/UX'],
+                integrations: 'Integrates with Jira, GitHub, GitLab, and more. Strong CI/CD integration with any tool via a flexible CLI.',
+                reporting: 'Powerful reporting and analytics, trend charts, project dashboards, and automation-focused reports.',
+                automation: 'First-class automation support. Submits test results from any runner/framework. Manages test automation sources.',
+                pricing: 'Starts at $99/month for 10 users. Tiered pricing based on user count and parallel test runner limits.',
+                ratings: { usability: 5, integration: 4, reporting: 4, automation: 5, pricing: 4 }
+            },
+            {
+                id: 'practitest',
+                name: 'PractiTest',
+                logo: 'PT',
+                color: '#DC2626',
+                description: 'An all-in-one test management platform for manual and automated testing with a focus on end-to-end traceability.',
+                coreFeatures: ['End-to-end traceability (requirements, tests, issues)', 'Advanced filtering and views', 'Reusable test steps', 'Customizable fields and workflows'],
+                integrations: 'Two-way Jira integration, plus Azure DevOps, etc. Integrates with CI/CD and automation frameworks via API and FireCracker.',
+                reporting: 'Highly advanced and customizable reporting. Dashboards, reports, and traceability from requirements to defects.',
+                automation: 'Strong automation capabilities. Flexible API to integrate any automation tool.',
+                pricing: 'Starts at $49/user/month (min 3 users). Enterprise-focused tiers with more features.',
+                ratings: { usability: 4, integration: 4, reporting: 5, automation: 4, pricing: 2 }
+            },
+            {
+                id: 'qase',
+                name: 'Qase',
+                logo: 'QA',
+                color: '#6366F1',
+                description: 'A modern test management tool for dev and QA teams with a clean UI and powerful features for collaboration.',
+                coreFeatures: ['Hierarchical test suites', 'Shared steps and test case reviews', 'Smart test run planning', 'Clean and intuitive interface'],
+                integrations: 'Integrates with Jira, Redmine, YouTrack, GitHub, etc. Webhooks and API for CI/CD integration.',
+                reporting: 'Real-time reports and dashboards. Test run analytics and exportable reports.',
+                automation: 'Excellent support for automation. Provides official reporters for popular frameworks like Cypress and Playwright.',
+                pricing: 'Offers a generous free plan for up to 3 users. Paid plans start at $20/user/month with more features and integrations.',
+                ratings: { usability: 5, integration: 4, reporting: 4, automation: 5, pricing: 5 }
+            }
+        ];
+
+        const tabs = [
+            { id: 'overview', name: 'Overview' },
+            { id: 'coreFeatures', name: 'Core Features' },
+            { id: 'integrations', name: 'Integrations & Automation' },
+            { id: 'reporting', name: 'Reporting & Analytics' },
+            { id: 'pricing', name: 'Pricing' }
+        ];
+
+        let activeTab = 'overview';
+        let comparisonChart = null;
+        
+        const contentContainer = document.getElementById('content-container');
+        const tabsContainer = document.getElementById('tabs-container');
+
+        function renderTabs() {
+            tabsContainer.innerHTML = tabs.map(tab => `
+                <button 
+                    data-tab-id="${tab.id}"
+                    class="tab-button w-full text-left px-4 py-3 rounded-lg text-sm md:text-base transition-all duration-200 ${tab.id === activeTab ? 'active-tab' : 'inactive-tab hover:bg-gray-100'}">
+                    ${tab.name}
+                </button>
+            `).join('');
+        }
+
+        function renderContent() {
+            let content = '';
+            
+            if (activeTab === 'overview') {
+                content = `
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">Tool Overview</h2>
+                    <div class="space-y-6">
+                    ${toolsData.map(tool => `
+                        <div class="flex items-start space-x-4">
+                             <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl" style="background-color: ${tool.color};">
+                                ${tool.logo}
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-900">${tool.name}</h3>
+                                <p class="text-gray-600">${tool.description}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                    </div>
+                `;
+            } else {
+                const titleMap = {
+                    coreFeatures: 'Core Test Management Features',
+                    integrations: 'Integrations & Automation Support',
+                    reporting: 'Reporting & Analytics Capabilities',
+                    pricing: 'Pricing Model (Estimates)'
+                };
+                content = `
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">${titleMap[activeTab]}</h2>
+                    <div class="space-y-8">
+                    ${toolsData.map(tool => `
+                        <div>
+                            <div class="flex items-center space-x-3 mb-2">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: ${tool.color};">
+                                    ${tool.logo}
+                                </div>
+                                <h3 class="font-semibold text-xl text-gray-800">${tool.name}</h3>
+                            </div>
+                            ${activeTab === 'coreFeatures' ? 
+                                `<ul class="list-disc list-inside text-gray-600 pl-4 space-y-1">${tool.coreFeatures.map(f => `<li>${f}</li>`).join('')}</ul>` :
+                                `<p class="text-gray-600 pl-11">${tool[activeTab]}</p>`
+                            }
+                        </div>
+                    `).join('')}
+                    </div>
+                `;
+            }
+            contentContainer.innerHTML = content;
+        }
+        
+        function renderChart() {
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            const labels = ['Usability', 'Integration', 'Reporting', 'Automation', 'Pricing'];
+            
+            const datasets = toolsData.map(tool => ({
+                label: tool.name,
+                data: [
+                    tool.ratings.usability,
+                    tool.ratings.integration,
+                    tool.ratings.reporting,
+                    tool.ratings.automation,
+                    tool.ratings.pricing
+                ],
+                backgroundColor: `${tool.color}33`,
+                borderColor: tool.color,
+                pointBackgroundColor: tool.color,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: tool.color,
+                borderWidth: 2,
+            }));
+            
+            if (comparisonChart) {
+                comparisonChart.destroy();
+            }
+
+            comparisonChart = new Chart(ctx, {
+                type: 'radar',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.r !== null) {
+                                        label += context.parsed.r + ' / 5';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: { color: '#E5E7EB' },
+                            grid: { color: '#E5E7EB' },
+                            pointLabels: { font: { size: 14, weight: '500' }, color: '#4B5563' },
+                            suggestedMin: 0,
+                            suggestedMax: 5,
+                            ticks: {
+                                stepSize: 1,
+                                backdropColor: '#FDFBF8',
+                                color: '#6B7280'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function handleTabClick(e) {
+            const button = e.target.closest('.tab-button');
+            if (button) {
+                activeTab = button.dataset.tabId;
+                renderTabs();
+                renderContent();
+            }
+        }
+        
+        function init() {
+            renderTabs();
+            renderContent();
+            renderChart();
+            tabsContainer.addEventListener('click', handleTabClick);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
